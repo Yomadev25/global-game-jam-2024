@@ -64,12 +64,19 @@ namespace Yoma.ThirdPerson
             MessagingCenter.Subscribe<EnemyManager>(this, EnemyManager.MessageOnPlayerSelected, (sender) =>
             {
                 _currentEnemy = sender;
+                sender.SetOutline(true);
+            });
+
+            MessagingCenter.Subscribe<EnemyManager>(this, EnemyManager.MessageOnPlayerDeselected, (sender) =>
+            {
+                _currentEnemy = null;
             });
         }
 
         private void OnDestroy()
         {
             MessagingCenter.Unsubscribe<EnemyManager>(this, EnemyManager.MessageOnPlayerSelected);
+            MessagingCenter.Unsubscribe<EnemyManager>(this, EnemyManager.MessageOnPlayerDeselected);
         }
 
         private void Start()
@@ -201,6 +208,7 @@ namespace Yoma.ThirdPerson
                         return;
                     }
 
+                    _currentEnemy.SetOutline(false);
                     _currentEnemy = null;
                 }
             }

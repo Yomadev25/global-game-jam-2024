@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    public const string MessageOnGiveLaugh = "Give Laugh";
+
     [Header("Properties")]
     [SerializeField]
     private float _maxHp;
@@ -32,22 +34,25 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public void GiveLaugh(float laugh)
-    {
-        _laughGauge -= laugh;
-
-        if (_laughGauge >= 0)
-        {
-            _laughGauge = 0f;
-        }
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Laugh"))
         {
             GetLaugh(20f);
             Destroy(other.gameObject);
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Totem"))
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                float laugh = _laughGauge;
+                MessagingCenter.Send(this, MessageOnGiveLaugh, laugh);
+                _laughGauge = 0;
+            }
         }
     }
 }

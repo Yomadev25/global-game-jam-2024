@@ -35,6 +35,9 @@ public class EnemyStateMachine : MonoBehaviour
     private float _patrolDelay;
     [SerializeField]
     private int _currentPatrol;
+    [SerializeField]
+    private float _delayPerCombo;
+    private float _currentCooldown;
 
     [Header("References")]
     [SerializeField]
@@ -45,6 +48,8 @@ public class EnemyStateMachine : MonoBehaviour
     private AnimatorOverrideController _defaultAnim;
     [SerializeField]
     private AnimatorOverrideController _overrideAnim;
+    [SerializeField]
+    private EnemyManager _enemyManager;
 
 
     #region PUBLIC REFERENCES
@@ -60,6 +65,10 @@ public class EnemyStateMachine : MonoBehaviour
     public Animator Anim => _anim;
     public AnimatorOverrideController defaultAnim => _defaultAnim;
     public AnimatorOverrideController overrideAnim => _overrideAnim;
+    public EnemyManager enemyManager => _enemyManager;
+    public float viewRadius => _viewRadius;
+    public LayerMask targetLayer => _targetLayer;
+    public float combatRadius => _combatRadius;
 
     public bool IsReadyToCombat { get; set; }
     public int ComboCount { get; set; }
@@ -75,15 +84,17 @@ public class EnemyStateMachine : MonoBehaviour
 
     private void Update()
     {
-        if (CurrentState != null)
+        if (CurrentState != null && !_enemyManager.isCursed)
         {
             CurrentState.Update();
         }
+
+        CombatCooldownHandler();
     }
 
     private void FixedUpdate()
     {
-        if (CurrentState != null)
+        if (CurrentState != null && !_enemyManager.isCursed)
         {
             CurrentState.FixedUpdate();
         }
@@ -107,19 +118,15 @@ public class EnemyStateMachine : MonoBehaviour
         foreach (Collider collider in targetInViewRadius)
         {
             Transform target = collider.transform;
-            PlayerManager player = target.GetComponent<PlayerManager>();
 
             Vector3 dirToTarget = (target.position - transform.position).normalized;
 
             float angleToTarget = Vector3.Angle(transform.forward, dirToTarget);
-            float elevationAngle = Vector3.Angle(Vector3.up, dirToTarget); // Calculate the elevation angle
+            float elevationAngle = Vector3.Angle(Vector3.up, dirToTarget);
 
             if (angleToTarget < _viewAngle / 2 && (elevationAngle > 80 && elevationAngle < 110))
             {
-                if (!IsInLineOfSight(target))
-                {
-                    return target;
-                }
+                return target;
             }
         }
 
@@ -132,7 +139,7 @@ public class EnemyStateMachine : MonoBehaviour
 
         foreach (Collider collider in targetInChaseRadius)
         {
-            PlayerManager player = collider.transform.GetComponent<PlayerManager>();
+            Transform player = collider.transform;
 
             if (Vector3.Distance(player.transform.position, this.transform.position) > _chaseRadius * 0.6f)
             {
@@ -190,7 +197,30 @@ public class EnemyStateMachine : MonoBehaviour
         position = target.position;
         return Vector3.MoveTowards(position, transform.position, .95f);
     }
+
+    public void ChangeTargetLayer(LayerMask layer)
+    {
+        _targetLayer = layer;
+    }
     #endregion
+
+    private void CombatCooldownHandler()
+    {
+        if (_currentCooldown <= 0 && !IsReadyToCombat)
+        {
+            IsReadyToCombat = true;
+        }
+        else
+        {
+            _currentCooldown -= Time.deltaTime;
+        }
+    }
+
+    public void ResetCombatCooldown()
+    {
+        _currentCooldown = _delayPerCombo;
+        IsReadyToCombat = false;
+    }
 
     #region DEBUGING
     private void OnDrawGizmosSelected()

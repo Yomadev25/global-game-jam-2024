@@ -1024,6 +1024,7 @@ GameObject:
   - component: {fileID: 4611521115123082377}
   - component: {fileID: 5453128132702382357}
   - component: {fileID: 6089366286233525226}
+  - component: {fileID: 6757200128629576223}
   m_Layer: 7
   m_Name: Enemy
   m_TagString: Enemy
@@ -1081,12 +1082,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyStateMachine: {fileID: 4611521115123082377}
-  _maxHp: 100
+  _maxHp: 1
   _hp: 0
   _type: 0
   _anim: {fileID: 6642235112658037352}
   _laughPrefab: {fileID: 4925392579917145487, guid: 31aa36870080b0342a0a74b9a656f6f8,
     type: 3}
+  _enemyForm:
+  - {fileID: 2918177981842433105}
+  - {fileID: 7540916474850740149}
+  - {fileID: 2848522277397116108}
+  - {fileID: 481835190240883319}
+  _allyForm:
+  - {fileID: 8105197415206142017}
+  - {fileID: 5945693953088608832}
+  - {fileID: 4375334844016054188}
+  - {fileID: 7698685250915731598}
+  _outline: {fileID: 6757200128629576223}
   onTakeDamage:
     m_PersistentCalls:
       m_Calls: []
@@ -1168,6 +1180,24 @@ CapsuleCollider:
   m_Height: 2.2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &6757200128629576223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8200247294515180067}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 0, g: 1, b: 0.4426689, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &8604977961234734952
 GameObject:
   m_ObjectHideFlags: 0
