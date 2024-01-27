@@ -7,6 +7,8 @@ namespace Yoma.ThirdPerson
 {
     public class PlayerController : MonoBehaviour
     {
+        public const string MessageUpdateCharge = "Update Charge";
+
         [Header("MOVEMENT REFERENCES")]
         [SerializeField]
         private float _speed = 6f;
@@ -35,6 +37,10 @@ namespace Yoma.ThirdPerson
         private float _currentCharge;
         [SerializeField]
         private EnemyManager _currentEnemy;
+
+        [Header("EFFECTS")]
+        [SerializeField]
+        private GameObject _chargeFx;
 
         [Header("OPTIONAL")]
         [SerializeField]
@@ -83,6 +89,8 @@ namespace Yoma.ThirdPerson
         {
             _controller = GetComponent<CharacterController>();
             _camPos = Camera.main.gameObject.transform;
+
+            MessagingCenter.Send(this, MessageUpdateCharge, _currentCharge);
         }
 
         void Update()
@@ -177,22 +185,26 @@ namespace Yoma.ThirdPerson
             if (Input.GetMouseButton(0))
             {
                 isCharge = true;
+                _chargeFx.SetActive(true);
                 ChangeAnimation(CHARGE);
 
                 _currentCharge += _chargeSpeed * Time.deltaTime;
                 if (_currentCharge >= 100f) _currentCharge = 100f;
+
+                MessagingCenter.Send(this, MessageUpdateCharge, _currentCharge);
             }
 
             if (Input.GetMouseButtonUp(0))
             {
                 isCharge = false;
-
+                _chargeFx.SetActive(false);
                 if (_currentCharge >= 40f)
                 {
                     StartCoroutine(SpellDeploy(_currentCharge));
                 }
 
                 _currentCharge = 0;
+                MessagingCenter.Send(this, MessageUpdateCharge, _currentCharge);
             }
 
             if (Input.GetKeyDown(KeyCode.LeftControl))
@@ -224,9 +236,18 @@ namespace Yoma.ThirdPerson
             Transform target = _currentEnemy.transform;
             GameObject ball = Instantiate(_laughBall, transform.position + transform.forward + transform.up, Quaternion.identity);
 
+            if(damage >= 75)
+            {
+                ball.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+            }
+            else if (damage >= 100)
+            {
+                ball.transform.localScale = new Vector3(2, 2, 2);
+            }
+
             while (ball != null)
             {
-                ball.transform.position = Vector3.Lerp(ball.transform.position, target.position, 7 * Time.deltaTime);
+                ball.transform.position = Vector3.Lerp(ball.transform.position, target.position, 3 * Time.deltaTime);
                 yield return null;
             }
 

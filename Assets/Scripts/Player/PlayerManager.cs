@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    public const string MessageOnWantToGiveLaugh = "Want To Give Laugh";
     public const string MessageOnGiveLaugh = "Give Laugh";
+    public const string MessageUpdateHp = "Update Hp";
+    public const string MessageUpdateLaugh = "Update Laugh";
 
     [Header("Properties")]
     [SerializeField]
@@ -14,14 +17,49 @@ public class PlayerManager : MonoBehaviour
     [SerializeField]
     private float _laughGauge;
 
+    [Header("Effects")]
+    [SerializeField]
+    private GameObject _hitFx;
+
+    private bool _isCanGiveTotem;
+    private bool _isDie;
+
     void Start()
     {
         _hp = _maxHp;
+        MessagingCenter.Send(this, MessageUpdateHp, _hp);
+        MessagingCenter.Send(this, MessageUpdateLaugh, _laughGauge);
+    }
+
+    private void Update()
+    {
+        if (_isCanGiveTotem)
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                float laugh = _laughGauge;
+                MessagingCenter.Send(this, MessageOnGiveLaugh, laugh);
+                _laughGauge = 0;
+
+                MessagingCenter.Send(this, MessageUpdateLaugh, _laughGauge);
+            }
+        }
     }
 
     public void TakeDamage(float damage)
     {
+        if (_isDie) return;
+
         _hp -= damage;
+        CameraShake.instance.ShakeCamera(0.3f);
+        Instantiate(_hitFx, transform.position + transform.up, Quaternion.identity);
+        MessagingCenter.Send(this, MessageUpdateHp, _hp);
+
+        if (_hp <= 0)
+        {           
+            _isDie = true;
+            GameManager.instance.Gameover(GameManager.OverType.Gameover);
+        }
     }
     
     public void GetLaugh(float laugh)
@@ -32,6 +70,8 @@ public class PlayerManager : MonoBehaviour
         {
             _laughGauge = 100f;
         }
+
+        MessagingCenter.Send(this, MessageUpdateLaugh, _laughGauge);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -41,18 +81,20 @@ public class PlayerManager : MonoBehaviour
             GetLaugh(20f);
             Destroy(other.gameObject);
         }
+
+        if (other.CompareTag("Totem"))
+        {
+            _isCanGiveTotem = true;
+            MessagingCenter.Send(this, MessageOnWantToGiveLaugh, true);
+        }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Totem"))
         {
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                float laugh = _laughGauge;
-                MessagingCenter.Send(this, MessageOnGiveLaugh, laugh);
-                _laughGauge = 0;
-            }
+            _isCanGiveTotem = false;
+            MessagingCenter.Send(this, MessageOnWantToGiveLaugh, false);
         }
     }
 }

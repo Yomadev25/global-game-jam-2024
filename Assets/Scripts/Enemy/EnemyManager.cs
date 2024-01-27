@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 
 public class EnemyManager : MonoBehaviour
@@ -26,6 +27,18 @@ public class EnemyManager : MonoBehaviour
     [SerializeField]
     private Type _type;
 
+    [Header("Effects")]
+    [SerializeField]
+    private GameObject _laughHitFx;
+    [SerializeField]
+    private GameObject _trasformFx;
+    [SerializeField]
+    private GameObject _hitFx;
+
+    [Header("HUD")]
+    [SerializeField]
+    private Image _hpFill;
+
     [Header("References")]
     [SerializeField]
     private Animator _anim;
@@ -39,6 +52,10 @@ public class EnemyManager : MonoBehaviour
     private LayerMask _enemyLayer;
     [SerializeField]
     private LayerMask _playerLayer;
+    [SerializeField]
+    private Color _playerColor;
+    [SerializeField]
+    private Color _enemyColor;
     [SerializeField]
     private Outline _outline;
 
@@ -60,6 +77,7 @@ public class EnemyManager : MonoBehaviour
     private void Start()
     {
         _hp = _maxHp;
+        _hpFill.fillAmount = _hp / _maxHp;
 
         if (_type == Type.Ally)
         {
@@ -74,6 +92,7 @@ public class EnemyManager : MonoBehaviour
 
             _enemyStateMachine.ChangeTargetLayer(_enemyLayer);
             gameObject.layer = LayerMask.NameToLayer("Player");
+            _hpFill.color = _playerColor;
         }
         else if (_type == Type.Enemy)
         {
@@ -88,6 +107,7 @@ public class EnemyManager : MonoBehaviour
 
             _enemyStateMachine.ChangeTargetLayer(_playerLayer);
             gameObject.layer = LayerMask.NameToLayer("Enemy");
+            _hpFill.color = _enemyColor;
         }
     }
 
@@ -104,16 +124,23 @@ public class EnemyManager : MonoBehaviour
         if (isDie) return;
 
         _hp -= damage;
+        _hpFill.fillAmount = _hp / _maxHp;
+
         onTakeDamage?.Invoke();
 
         StopCoroutine(LaughCurse());
         StartCoroutine(LaughCurse());
+
+        Instantiate(_laughHitFx, transform.position + transform.up, Quaternion.identity);
     }
 
     public void TakeDamage(float damage)
     {
         if (isDie) return;
         _hp -= damage;
+        _hpFill.fillAmount = _hp / _maxHp;
+
+        Instantiate(_hitFx, transform.position + transform.up, Quaternion.identity);
     }
 
     IEnumerator LaughCurse()
@@ -129,11 +156,14 @@ public class EnemyManager : MonoBehaviour
         if (isDie) return;
 
         _hp += heal;
+        _hpFill.fillAmount = _hp / _maxHp;
         if (_hp >= _maxHp) _hp = _maxHp;
 
         onHeal?.Invoke();
         StopCoroutine(LaughCurse());
         StartCoroutine(LaughCurse());
+
+        Instantiate(_laughHitFx, transform.position + transform.up, Quaternion.identity);
     }
 
     private void Die()
@@ -157,6 +187,7 @@ public class EnemyManager : MonoBehaviour
             gameObject.layer = LayerMask.NameToLayer("Player");
 
             _type = Type.Ally;
+            _hpFill.color = _playerColor;
         }
         else if (_type == Type.Ally)
         {
@@ -172,12 +203,17 @@ public class EnemyManager : MonoBehaviour
             gameObject.layer = LayerMask.NameToLayer("Enemy");
 
             _type = Type.Enemy;
+            _hpFill.color = _enemyColor;
         }
 
+        Instantiate(_trasformFx, transform.position, Quaternion.identity);
         _enemyStateMachine.CurrentState = _enemyStateMachine.State.Idle();
         _enemyStateMachine.CurrentState.Enter();
         _hp = _maxHp;
+        _hpFill.fillAmount = _hp / _maxHp;
         SetOutline(false);
+        GameManager.instance.AlliesCount();
+
         isDie = false;
     }
 
@@ -245,13 +281,12 @@ public class EnemyManager : MonoBehaviour
         {          
             if (_type == Type.Enemy)
             {
-                TakeLaughDamage(1f);              
+                TakeLaughDamage(other.transform.localScale.x);
             }
             else if (_type == Type.Ally)
             {
                 Heal(1f);
-            }
-
+            }           
             Destroy(other.gameObject);
         }
     }
