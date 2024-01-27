@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
     public DateTime startTime;
 
     [SerializeField]
+    private GameObject[] _enemyPrefabs;
+    [SerializeField]
     private GameObject _overviewCamera;
     [SerializeField]
     private ParticleSystem _totemFx;
@@ -47,6 +49,18 @@ public class GameManager : MonoBehaviour
             TransitionManager.Instance.SceneFadeOut();
         }
         startTime = DateTime.Now;
+
+        for (int i = 0; i < 40; i++)
+        {
+            Vector3 pos;
+            pos.x = UnityEngine.Random.Range(-7f, 28f);
+            pos.y = 2f;
+            pos.z = UnityEngine.Random.Range(-7f, 25f);
+
+            Quaternion rot = Quaternion.Euler(pos.x, UnityEngine.Random.Range(0f, 360f), pos.z);
+
+            Instantiate(_enemyPrefabs[UnityEngine.Random.Range(0, _enemyPrefabs.Length)], pos, rot);
+        }
     }
 
     public void Gameover(OverType type)

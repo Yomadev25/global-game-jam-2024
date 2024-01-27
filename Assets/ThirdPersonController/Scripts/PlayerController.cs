@@ -37,6 +37,8 @@ namespace Yoma.ThirdPerson
         private float _currentCharge;
         [SerializeField]
         private EnemyManager _currentEnemy;
+        [SerializeField]
+        private float _damageMultiply = 1f;
 
         [Header("EFFECTS")]
         [SerializeField]
@@ -77,12 +79,24 @@ namespace Yoma.ThirdPerson
             {
                 _currentEnemy = null;
             });
+
+            MessagingCenter.Subscribe<LaughMachine>(this, LaughMachine.MessageWantToUpgradeCastSpeed, (sender) =>
+            {
+                _chargeSpeed += 25;
+            });
+
+            MessagingCenter.Subscribe<LaughMachine>(this, LaughMachine.MessageWantToUpgradeSpell, (sender) =>
+            {
+                _damageMultiply += 0.3f;
+            });
         }
 
         private void OnDestroy()
         {
             MessagingCenter.Unsubscribe<EnemyManager>(this, EnemyManager.MessageOnPlayerSelected);
             MessagingCenter.Unsubscribe<EnemyManager>(this, EnemyManager.MessageOnPlayerDeselected);
+            MessagingCenter.Unsubscribe<LaughMachine>(this, LaughMachine.MessageWantToUpgradeCastSpeed);
+            MessagingCenter.Unsubscribe<LaughMachine>(this, LaughMachine.MessageWantToUpgradeSpell);
         }
 
         private void Start()
@@ -238,11 +252,13 @@ namespace Yoma.ThirdPerson
 
             if(damage >= 75)
             {
-                ball.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                float size = 1.5f * _damageMultiply;
+                ball.transform.localScale = new Vector3(size, size, size);
             }
             else if (damage >= 100)
             {
-                ball.transform.localScale = new Vector3(2, 2, 2);
+                float size = 2f * _damageMultiply;
+                ball.transform.localScale = new Vector3(size, size, size);
             }
 
             while (ball != null)

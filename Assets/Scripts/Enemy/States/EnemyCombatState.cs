@@ -43,7 +43,7 @@ public class EnemyCombatState : EnemyBaseState
                 EnemyManager enemy = collider.GetComponent<EnemyManager>();
                 if (enemy != null)
                 {
-                    enemy.TakeLaughDamage(1f);
+                    enemy.TakeLaughDamage(_context.laughDamage);
                 }
             }
 

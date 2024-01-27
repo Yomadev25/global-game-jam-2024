@@ -66,9 +66,9 @@ public class PlayerManager : MonoBehaviour
     {
         _laughGauge += laugh;
 
-        if (_laughGauge >= 100)
+        if (_laughGauge >= 25f)
         {
-            _laughGauge = 100f;
+            _laughGauge = 25f;
         }
 
         MessagingCenter.Send(this, MessageUpdateLaugh, _laughGauge);
@@ -78,7 +78,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (other.CompareTag("Laugh"))
         {
-            GetLaugh(20f);
+            GetLaugh(Random.Range(3f, 5f));
             Destroy(other.gameObject);
         }
 

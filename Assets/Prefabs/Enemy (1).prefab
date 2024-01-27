@@ -5469,7 +5469,7 @@ MonoBehaviour:
   _trasformFx: {fileID: 5654446011615673588, guid: dd2c8b8d447f0cb40bd349573d97c555,
     type: 3}
   _hitFx: {fileID: 1274999238816079212, guid: c8faee2222b8cb34c9ccc791e51b0fd5, type: 3}
-  _hpFill: {fileID: 0}
+  _hpFill: {fileID: 5239070527604520974}
   _anim: {fileID: 7203223807273795144}
   _laughPrefab: {fileID: 4925392579917145487, guid: 31aa36870080b0342a0a74b9a656f6f8,
     type: 3}
@@ -5534,8 +5534,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 853e1fdadf3751c40b59ca1dd9d9ff22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _viewRadius: 5
-  _chaseRadius: 7
+  _viewRadius: 6
+  _chaseRadius: 8
   _combatRadius: 1
   _viewAngle: 359
   _targetLayer:
@@ -5548,7 +5548,8 @@ MonoBehaviour:
   _patrolSequence: []
   _patrolDelay: 0
   _currentPatrol: 0
-  _delayPerCombo: 0
+  _delayPerCombo: 5
+  laughDamage: 0.5
   _navMesh: {fileID: 1427486152613757956}
   _anim: {fileID: 7203223807273795144}
   _defaultAnim: {fileID: 22100000, guid: 2a979e97ca1e2c14485576a512edb225, type: 2}

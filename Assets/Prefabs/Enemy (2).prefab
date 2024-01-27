@@ -6503,8 +6503,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 853e1fdadf3751c40b59ca1dd9d9ff22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _viewRadius: 5
-  _chaseRadius: 7
+  _viewRadius: 6
+  _chaseRadius: 8
   _combatRadius: 1
   _viewAngle: 359
   _targetLayer:
@@ -6517,7 +6517,8 @@ MonoBehaviour:
   _patrolSequence: []
   _patrolDelay: 0
   _currentPatrol: 0
-  _delayPerCombo: 0
+  _delayPerCombo: 5
+  laughDamage: 0.5
   _navMesh: {fileID: 5262164348832232235}
   _anim: {fileID: 2330418182591128043}
   _defaultAnim: {fileID: 22100000, guid: 2a979e97ca1e2c14485576a512edb225, type: 2}

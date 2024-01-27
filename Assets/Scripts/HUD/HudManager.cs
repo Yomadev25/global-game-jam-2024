@@ -120,7 +120,7 @@ public class HudManager : MonoBehaviour
 
     private void UpdateLaughBar(float laugh)
     {
-        _laughFill.fillAmount = laugh / 100;
+        _laughFill.fillAmount = laugh / 25;
     }
 
     private void UpdateChargeFill(float charge)
@@ -173,6 +173,11 @@ public class HudManager : MonoBehaviour
 
             TMP_Text time = _timeTotal.transform.GetChild(0).GetComponent<TMP_Text>();
             time.text = $"{duration.Minutes.ToString("00")}:{duration.Seconds.ToString("00")}";
+
+            if (type == GameManager.OverType.Allies)
+            {
+                laugh.text = "INCREDIBLE!!";
+            }
         }
         else if (type== GameManager.OverType.Gameover)
         {

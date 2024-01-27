@@ -38,6 +38,7 @@ public class EnemyStateMachine : MonoBehaviour
     [SerializeField]
     private float _delayPerCombo;
     private float _currentCooldown;
+    public float laughDamage;
 
     [Header("References")]
     [SerializeField]
