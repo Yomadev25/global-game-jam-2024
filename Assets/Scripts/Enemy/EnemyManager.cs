@@ -188,6 +188,8 @@ public class EnemyManager : MonoBehaviour
 
             _type = Type.Ally;
             _hpFill.color = _playerColor;
+
+            _enemyStateMachine.SetBehavior(EnemyStateMachine.IdleBehavior.PATROL);
         }
         else if (_type == Type.Ally)
         {

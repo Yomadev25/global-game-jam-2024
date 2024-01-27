@@ -13,6 +13,8 @@ public class LaughMachine : MonoBehaviour
     [SerializeField]
     private ParticleSystem _totemFx;
     [SerializeField]
+    private ParticleSystem _totemGetLaughFx;
+    [SerializeField]
     private float _currentLaugh;
     [SerializeField]
     private Sprite[] _upgradeSprites;
@@ -46,6 +48,7 @@ public class LaughMachine : MonoBehaviour
     private void GetLaugh(float laugh)
     {
         _currentLaugh += laugh;
+        _totemGetLaughFx.Play();
         MessagingCenter.Send(this, MessageOnUpdateLaughMachine, _currentLaugh);
 
         if (_currentLaugh >= 100)

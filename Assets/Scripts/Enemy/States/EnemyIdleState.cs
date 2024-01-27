@@ -16,7 +16,7 @@ public class EnemyIdleState : EnemyBaseState
 
         if (_context.idleBehavior == EnemyStateMachine.IdleBehavior.PATROL)
         {
-            _context.NavMesh.speed = 2f;
+            _context.NavMesh.speed = 0.5f;
             _context.NavMesh.isStopped = false;
         }
     }
@@ -29,7 +29,7 @@ public class EnemyIdleState : EnemyBaseState
         }
         if (_context.idleBehavior == EnemyStateMachine.IdleBehavior.PATROL)
         {
-            if (Vector3.Distance(_context.transform.position, _context.patrolSequence[_context.currentPatrol].position) < 1)
+            if (Vector3.Distance(_context.transform.position, _context.patrolPoint) < 1)
             {
                 _context.ChangePatrolPoint();
                 delay = _context.patrolDelay;
@@ -37,7 +37,7 @@ public class EnemyIdleState : EnemyBaseState
 
             if (delay <= 0)
             {
-                _context.NavMesh.SetDestination(_context.patrolSequence[_context.currentPatrol].position);
+                _context.NavMesh.SetDestination(_context.patrolPoint);
             }
             else
             {

@@ -30,7 +30,7 @@ public class EnemyStateMachine : MonoBehaviour
     [SerializeField]
     private IdleBehavior _idleBehavior;
     [SerializeField]
-    private Transform[] _patrolSequence;
+    private Vector3 _patrolPoint;
     [SerializeField]
     private float _patrolDelay;
     [SerializeField]
@@ -58,7 +58,7 @@ public class EnemyStateMachine : MonoBehaviour
     public EnemyStateFactory State { get; set; }
 
     public IdleBehavior idleBehavior => _idleBehavior;
-    public Transform[] patrolSequence => _patrolSequence;
+    public Vector3 patrolPoint => _patrolPoint;
     public float patrolDelay => _patrolDelay;
     public int currentPatrol => _currentPatrol;
 
@@ -81,6 +81,10 @@ public class EnemyStateMachine : MonoBehaviour
         State = new EnemyStateFactory(this);
         CurrentState = State.Idle();
         CurrentState.Enter();
+
+        ChangePatrolPoint();
+        _patrolDelay = Random.Range(6f, 10f);
+        _idleBehavior = (IdleBehavior)Random.Range(0, 2);
     }
 
     private void Update()
@@ -103,12 +107,10 @@ public class EnemyStateMachine : MonoBehaviour
 
     public void ChangePatrolPoint()
     {
-        _currentPatrol++;
-
-        if (_currentPatrol > _patrolSequence.Length - 1)
-        {
-            _currentPatrol = 0;
-        }
+        float distance = Random.Range(2f, 4f);
+        Vector3 currentPoint = transform.position;
+        _patrolPoint.x = Random.Range(currentPoint.x - distance, currentPoint.x + distance);
+        _patrolPoint.z = Random.Range(currentPoint.z - distance, currentPoint.z + distance);
     }
 
     #region ENEMY VISUALIZATION
@@ -221,6 +223,11 @@ public class EnemyStateMachine : MonoBehaviour
     {
         _currentCooldown = _delayPerCombo;
         IsReadyToCombat = false;
+    }
+
+    public void SetBehavior(IdleBehavior behavior)
+    {
+        _idleBehavior = behavior;
     }
 
     #region DEBUGING

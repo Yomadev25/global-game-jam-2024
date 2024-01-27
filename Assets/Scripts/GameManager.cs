@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,6 +28,8 @@ public class GameManager : MonoBehaviour
     private ParticleSystem _totemFx;
     [SerializeField]
     private ParticleSystem _darkFx;
+    [SerializeField]
+    private Volume _darkVolume;
 
 
     private void Awake()
@@ -78,6 +81,10 @@ public class GameManager : MonoBehaviour
         {
             case OverType.Gameover:
                 _darkFx.Play();
+                LeanTween.value(0, 1, 1f).setOnUpdate((x) =>
+                {
+                    _darkVolume.weight = x;
+                });
                 foreach (GameObject ally in allies)
                 {
                     ally.GetComponent<EnemyManager>().TakeDamage(100);
@@ -90,7 +97,7 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case OverType.Allies:
-                _totemFx.Play();
+                _totemFx.Play();                
                 break;
             default:
                 break;

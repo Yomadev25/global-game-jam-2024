@@ -115,7 +115,7 @@ public class HudManager : MonoBehaviour
 
     private void UpdateHpBar(float hp)
     {
-        _hpFill.fillAmount = hp / 100;
+        _hpFill.fillAmount = hp / 20;
     }
 
     private void UpdateLaughBar(float laugh)
