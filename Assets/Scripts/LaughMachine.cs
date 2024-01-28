@@ -57,6 +57,7 @@ public class LaughMachine : MonoBehaviour
         if (_currentLaugh >= 100)
         {
             GameManager.instance.Gameover(GameManager.OverType.Totem);
+            _currentLaugh = 100;
             _totemFx.Play();
         }
         else if (_currentLaugh >= 75)

@@ -284,7 +284,6 @@ namespace Yoma.ThirdPerson
                 yield return null;
             }
 
-            yield return new WaitForSeconds(0.5f);
             isAttack = false;
         }
     }
