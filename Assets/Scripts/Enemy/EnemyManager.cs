@@ -287,7 +287,7 @@ public class EnemyManager : MonoBehaviour
         {          
             if (_type == Type.Enemy)
             {
-                TakeLaughDamage(other.transform.localScale.x);
+                TakeLaughDamage(other.transform.localScale.x * 1.3f);
             }
             else if (_type == Type.Ally)
             {

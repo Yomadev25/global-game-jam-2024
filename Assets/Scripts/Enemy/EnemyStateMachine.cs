@@ -128,16 +128,7 @@ public class EnemyStateMachine : MonoBehaviour
         foreach (Collider collider in targetInViewRadius)
         {
             Transform target = collider.transform;
-
-            Vector3 dirToTarget = (target.position - transform.position).normalized;
-
-            float angleToTarget = Vector3.Angle(transform.forward, dirToTarget);
-            float elevationAngle = Vector3.Angle(Vector3.up, dirToTarget);
-
-            if (angleToTarget < _viewAngle / 2 && (elevationAngle > 80 && elevationAngle < 110))
-            {
-                return target;
-            }
+            return target;
         }
 
         return null;
@@ -149,13 +140,6 @@ public class EnemyStateMachine : MonoBehaviour
 
         foreach (Collider collider in targetInChaseRadius)
         {
-            Transform player = collider.transform;
-
-            if (Vector3.Distance(player.transform.position, this.transform.position) > _chaseRadius * 0.6f)
-            {
-                return null;
-            }
-
             return collider.transform;
         }
 
@@ -181,31 +165,6 @@ public class EnemyStateMachine : MonoBehaviour
             angleInDegrees += transform.eulerAngles.y;
         }
         return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
-    }
-
-    private bool IsInLineOfSight(Transform target)
-    {
-        Vector3 middlePoint = (transform.position + target.position) / 2;
-
-        Collider[] obstacles = Physics.OverlapSphere(middlePoint, Vector3.Distance(transform.position, target.position) / 2, _obstacleLayer);
-
-        foreach (Collider obstacle in obstacles)
-        {
-            if (obstacle.transform != target)
-            {
-                return true;
-            }
-        }
-
-
-        return false;
-    }
-
-    public Vector3 TargetOffset(Transform target)
-    {
-        Vector3 position;
-        position = target.position;
-        return Vector3.MoveTowards(position, transform.position, .95f);
     }
 
     public void ChangeTargetLayer(LayerMask layer)
