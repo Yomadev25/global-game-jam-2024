@@ -31,6 +31,18 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Volume _darkVolume;
 
+    [Header("Audio")]
+    [SerializeField]
+    private AudioSource _bgm;
+    [SerializeField]
+    private AudioSource _successSfx;
+    [SerializeField]
+    private AudioSource _failSfx;
+    [SerializeField]
+    private AudioSource _gameoverSfx;
+    [SerializeField]
+    private AudioSource _gameCompleteSfx;
+
 
     private void Awake()
     {
@@ -89,15 +101,19 @@ public class GameManager : MonoBehaviour
                 {
                     ally.GetComponent<EnemyManager>().TakeDamage(100);
                 }
+                RewardManager.Instance.isLose = true;
+                _failSfx.Play();
                 break;
             case OverType.Totem:
-                foreach (GameObject enemy in enemies)
+                /*foreach (GameObject enemy in enemies)
                 {
                     enemy.GetComponent<EnemyManager>().TakeLaughDamage(100);
-                }
+                }*/
+                _successSfx.Play();
                 break;
             case OverType.Allies:
-                _totemFx.Play();                
+                _totemFx.Play();
+                _successSfx.Play();
                 break;
             default:
                 break;
@@ -105,7 +121,21 @@ public class GameManager : MonoBehaviour
 
         _overviewCamera.SetActive(true);
         yield return new WaitForSeconds(3f);
-        _overviewCamera.SetActive(false);
+        _bgm.Stop();
+        switch (type)
+        {
+            case OverType.Gameover:
+                _gameoverSfx.Play();
+                break;
+            case OverType.Totem:
+                _gameCompleteSfx.Play();
+                break;
+            case OverType.Allies:
+                _gameCompleteSfx.Play();
+                break;
+            default:
+                break;
+        }
         MessagingCenter.Send(this, MessageOnGameover, type);
     }
 

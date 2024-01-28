@@ -59,6 +59,12 @@ public class EnemyManager : MonoBehaviour
     [SerializeField]
     private Outline _outline;
 
+    [Header("Audio")]
+    [SerializeField]
+    private AudioSource _allyLaughSfx;
+    [SerializeField]
+    private AudioSource _enemyLaughSfx;
+
     [Header("Events")]
     [SerializeField]
     private UnityEvent onTakeDamage;
@@ -66,7 +72,6 @@ public class EnemyManager : MonoBehaviour
     private UnityEvent onHeal;
 
     bool isDie;
-    bool isSelected;
     public bool isCursed;
     public Type type => _type;
 
@@ -132,6 +137,8 @@ public class EnemyManager : MonoBehaviour
         StartCoroutine(LaughCurse());
 
         Instantiate(_laughHitFx, transform.position + transform.up, Quaternion.identity);
+        _enemyLaughSfx.Play();
+        _enemyStateMachine.DetectAttack();
     }
 
     public void TakeDamage(float damage)
@@ -164,6 +171,7 @@ public class EnemyManager : MonoBehaviour
         StartCoroutine(LaughCurse());
 
         Instantiate(_laughHitFx, transform.position + transform.up, Quaternion.identity);
+        _allyLaughSfx.Play();
     }
 
     private void Die()
@@ -233,7 +241,6 @@ public class EnemyManager : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (isSelected) return;
         PlayerManager player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerManager>();
         if (player != null)
         {
@@ -247,7 +254,6 @@ public class EnemyManager : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (isSelected) return;
         if (_outline.enabled)
         {
             _outline.enabled = false;
@@ -273,8 +279,6 @@ public class EnemyManager : MonoBehaviour
             _outline.OutlineColor = Color.white;
             MessagingCenter.Send(this, MessageOnPlayerDeselected);
         }
-
-        isSelected = active;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -287,7 +291,7 @@ public class EnemyManager : MonoBehaviour
             }
             else if (_type == Type.Ally)
             {
-                Heal(1f);
+                Heal(other.transform.localScale.x * 0.8f);
             }           
             Destroy(other.gameObject);
         }

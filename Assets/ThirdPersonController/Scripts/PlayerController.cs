@@ -8,6 +8,7 @@ namespace Yoma.ThirdPerson
     public class PlayerController : MonoBehaviour
     {
         public const string MessageUpdateCharge = "Update Charge";
+        public const string MessageCannotFindTarget = "Cannot Find Target";
 
         [Header("MOVEMENT REFERENCES")]
         [SerializeField]
@@ -59,6 +60,12 @@ namespace Yoma.ThirdPerson
         const string SPELL = "spell";
         string _currentState;
 
+        [Header("Audio")]
+        [SerializeField]
+        private AudioSource _chargeSfx;
+        [SerializeField]
+        private AudioSource _spellSfx;
+
         private CharacterController _controller;
         float horizontal;
         float vertical;
@@ -72,7 +79,7 @@ namespace Yoma.ThirdPerson
             MessagingCenter.Subscribe<EnemyManager>(this, EnemyManager.MessageOnPlayerSelected, (sender) =>
             {
                 _currentEnemy = sender;
-                sender.SetOutline(true);
+                //sender.SetOutline(true);
             });
 
             MessagingCenter.Subscribe<EnemyManager>(this, EnemyManager.MessageOnPlayerDeselected, (sender) =>
@@ -194,12 +201,16 @@ namespace Yoma.ThirdPerson
 
         private void SpellCast()
         {
-            if (_currentEnemy == null) return;
-
             if (Input.GetMouseButton(0))
             {
                 isCharge = true;
                 _chargeFx.SetActive(true);
+
+                if (!_chargeSfx.isPlaying)
+                {
+                    _chargeSfx.Play();
+                }
+
                 ChangeAnimation(CHARGE);
 
                 _currentCharge += _chargeSpeed * Time.deltaTime;
@@ -212,6 +223,7 @@ namespace Yoma.ThirdPerson
             {
                 isCharge = false;
                 _chargeFx.SetActive(false);
+                _chargeSfx.Stop();
                 if (_currentCharge >= 40f)
                 {
                     StartCoroutine(SpellDeploy(_currentCharge));
@@ -242,10 +254,15 @@ namespace Yoma.ThirdPerson
 
         private IEnumerator SpellDeploy(float damage)
         {
-            if (_currentEnemy == null) yield break;
+            if (_currentEnemy == null)
+            {
+                MessagingCenter.Send(this, MessageCannotFindTarget);
+                yield break;
+            }
 
             isAttack = true;
             ChangeAnimation(SPELL);
+            _spellSfx.Play();
 
             Transform target = _currentEnemy.transform;
             GameObject ball = Instantiate(_laughBall, transform.position + transform.forward + transform.up, Quaternion.identity);
@@ -263,7 +280,7 @@ namespace Yoma.ThirdPerson
 
             while (ball != null)
             {
-                ball.transform.position = Vector3.Lerp(ball.transform.position, target.position, 3 * Time.deltaTime);
+                ball.transform.position = Vector3.MoveTowards(ball.transform.position, target.position, 5 * Time.deltaTime);
                 yield return null;
             }
 

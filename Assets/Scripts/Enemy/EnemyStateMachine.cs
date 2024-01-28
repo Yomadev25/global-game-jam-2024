@@ -85,6 +85,13 @@ public class EnemyStateMachine : MonoBehaviour
         ChangePatrolPoint();
         _patrolDelay = Random.Range(6f, 10f);
         _idleBehavior = (IdleBehavior)Random.Range(0, 2);
+
+        Invoke(nameof(CheckNavmesh), 0.5f);
+    }
+
+    private void CheckNavmesh()
+    {
+        if (!_navMesh.isOnNavMesh) Destroy(gameObject);
     }
 
     private void Update()
@@ -228,6 +235,23 @@ public class EnemyStateMachine : MonoBehaviour
     public void SetBehavior(IdleBehavior behavior)
     {
         _idleBehavior = behavior;
+    }
+
+    public void DetectAttack()
+    {
+        _viewRadius = 8;
+        _chaseRadius = 10;
+        StopCoroutine(IncreaseViewSize());
+        StartCoroutine(IncreaseViewSize());
+    }
+
+    IEnumerator IncreaseViewSize()
+    {
+        _viewRadius = 30;
+        _chaseRadius = 30;
+        yield return new WaitForSeconds(5f);
+        _viewRadius = 8;
+        _chaseRadius = 10;
     }
 
     #region DEBUGING

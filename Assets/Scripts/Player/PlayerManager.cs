@@ -20,14 +20,32 @@ public class PlayerManager : MonoBehaviour
     [Header("Effects")]
     [SerializeField]
     private GameObject _hitFx;
+    [SerializeField]
+    private GameObject _coinFx;
 
     private bool _isCanGiveTotem;
     private bool _isDie;
 
+    public float maxHp => _maxHp;
+    public float hp => _hp;
+
+    private void Awake()
+    {
+        MessagingCenter.Subscribe<RewardManager>(this, RewardManager.MessageOnGiveReward, (sender) =>
+        {
+            _maxHp += 10;
+        });
+    }
+
+    private void OnDestroy()
+    {
+        MessagingCenter.Unsubscribe<RewardManager>(this, RewardManager.MessageOnGiveReward);
+    }
+
     void Start()
     {
         _hp = _maxHp;
-        MessagingCenter.Send(this, MessageUpdateHp, _hp);
+        MessagingCenter.Send(this, MessageUpdateHp);
         MessagingCenter.Send(this, MessageUpdateLaugh, _laughGauge);
     }
 
@@ -53,7 +71,7 @@ public class PlayerManager : MonoBehaviour
         _hp -= damage;
         CameraShake.instance.ShakeCamera(0.3f);
         Instantiate(_hitFx, transform.position + transform.up, Quaternion.identity);
-        MessagingCenter.Send(this, MessageUpdateHp, _hp);
+        MessagingCenter.Send(this, MessageUpdateHp);
 
         if (_hp <= 0)
         {           
@@ -79,6 +97,7 @@ public class PlayerManager : MonoBehaviour
         if (other.CompareTag("Laugh"))
         {
             GetLaugh(Random.Range(3f, 5f));
+            Instantiate(_coinFx, transform.position, Quaternion.identity);
             Destroy(other.gameObject);
         }
 

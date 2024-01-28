@@ -21,6 +21,14 @@ public class MenuController : MonoBehaviour
     [SerializeField]
     private Button _ggjButton;
 
+    [Header("Sound Effect")]
+    [SerializeField]
+    private AudioSource _playSfx;
+    [SerializeField]
+    private AudioSource _pressSfx;
+    [SerializeField]
+    private AudioSource _hoverSfx;
+
     private void Start()
     {
         _playButton.onClick.AddListener(Play);
@@ -42,6 +50,7 @@ public class MenuController : MonoBehaviour
 
     private void Play()
     {
+        _playSfx.Play();
         TransitionManager.Instance.SceneFadeIn(1f, () =>
         {
             SceneManager.LoadScene("Game");
@@ -50,6 +59,8 @@ public class MenuController : MonoBehaviour
 
     private void HowTo()
     {
+        _pressSfx.Play();
+
         _menuHud.LeanAlpha(0, 0.3f);
         _menuHud.interactable = false;
         _menuHud.blocksRaycasts = false;
@@ -61,6 +72,8 @@ public class MenuController : MonoBehaviour
 
     private void BackToTitle()
     {
+        _pressSfx.Play();
+
         _howToHud.LeanAlpha(0, 0.3f);
         _howToHud.interactable = false;
         _howToHud.blocksRaycasts = false;
@@ -72,7 +85,13 @@ public class MenuController : MonoBehaviour
 
     private void GoToLandingPage()
     {
+        _pressSfx.Play();
         Application.OpenURL("https://globalgamejam.org/games/2024/laughing-spell-2");
+    }
+
+    public void OnHover()
+    {
+        _hoverSfx.Play();
     }
 
     private void Exit()

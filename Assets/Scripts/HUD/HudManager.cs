@@ -21,11 +21,17 @@ public class HudManager : MonoBehaviour
     [SerializeField]
     private Image _chargeFill;
     [SerializeField]
+    private Color _chargeDisableColor;
+    [SerializeField]
+    private Color _chargeEnableColor;
+    [SerializeField]
     private Image _laughMachineFill;
     [SerializeField]
     private TMP_Text _alliesText;
     [SerializeField]
     private GameObject _fillLaughAlert;
+    [SerializeField]
+    private GameObject _targetAlert;
 
     [Header("Result HUD")]
     [SerializeField]
@@ -55,9 +61,9 @@ public class HudManager : MonoBehaviour
             UpdateAlliesCount(count);
         });
 
-        MessagingCenter.Subscribe<PlayerManager, float>(this, PlayerManager.MessageUpdateHp, (sender, hp) =>
+        MessagingCenter.Subscribe<PlayerManager>(this, PlayerManager.MessageUpdateHp, (sender) =>
         {
-            UpdateHpBar(hp);
+            UpdateHpBar(sender.hp, sender.maxHp);
         });
 
         MessagingCenter.Subscribe<PlayerManager, float>(this, PlayerManager.MessageUpdateLaugh, (sender, laugh) =>
@@ -87,17 +93,24 @@ public class HudManager : MonoBehaviour
         {
             OnCloseToTotem(active);
         });
+
+        MessagingCenter.Subscribe<PlayerController>(this, PlayerController.MessageCannotFindTarget, (sender) =>
+        {
+            StopCoroutine(TargetAlert());
+            StartCoroutine(TargetAlert());
+        });
     }
 
     private void OnDestroy()
     {
         MessagingCenter.Unsubscribe<GameManager, GameManager.OverType>(this, GameManager.MessageOnGameover);
         MessagingCenter.Unsubscribe<GameManager, int>(this, GameManager.MessageUpdateAlliesCount);
-        MessagingCenter.Unsubscribe<PlayerManager, float>(this, PlayerManager.MessageUpdateHp);
+        MessagingCenter.Unsubscribe<PlayerManager>(this, PlayerManager.MessageUpdateHp);
         MessagingCenter.Unsubscribe<PlayerManager, float>(this, PlayerManager.MessageUpdateLaugh);
         MessagingCenter.Unsubscribe<PlayerController, float>(this, PlayerController.MessageUpdateCharge);
         MessagingCenter.Unsubscribe<LaughMachine, float>(this, LaughMachine.MessageOnUpdateLaughMachine);
         MessagingCenter.Unsubscribe<PlayerManager, bool>(this, PlayerManager.MessageOnWantToGiveLaugh);
+        MessagingCenter.Unsubscribe<PlayerController>(this, PlayerController.MessageCannotFindTarget);
     }
 
     private void Start()
@@ -113,9 +126,9 @@ public class HudManager : MonoBehaviour
         _menuButton.onClick.AddListener(BackToMenu);
     }
 
-    private void UpdateHpBar(float hp)
+    private void UpdateHpBar(float hp, float maxHp)
     {
-        _hpFill.fillAmount = hp / 20;
+        _hpFill.fillAmount = hp / maxHp;
     }
 
     private void UpdateLaughBar(float laugh)
@@ -125,6 +138,7 @@ public class HudManager : MonoBehaviour
 
     private void UpdateChargeFill(float charge)
     {
+        _chargeFill.color = charge >= 50? _chargeEnableColor : _chargeDisableColor;
         _chargeFill.fillAmount = charge / 100;
     }
 
@@ -195,5 +209,12 @@ public class HudManager : MonoBehaviour
         {
             SceneManager.LoadScene("Menu");
         });
+    }
+
+    IEnumerator TargetAlert()
+    {
+        _targetAlert.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        _targetAlert.SetActive(false);
     }
 }

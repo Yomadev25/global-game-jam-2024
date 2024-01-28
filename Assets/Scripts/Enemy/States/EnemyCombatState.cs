@@ -9,7 +9,6 @@ public class EnemyCombatState : EnemyBaseState
 
     public override async void Enter()
     {
-        Debug.Log("Combat");
         _context.Anim.SetFloat("Speed", 0);
 
         if (_context.enemyManager.type == EnemyManager.Type.Enemy)
