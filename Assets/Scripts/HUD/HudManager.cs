@@ -178,7 +178,7 @@ public class HudManager : MonoBehaviour
         TimeSpan duration =  DateTime.Now - GameManager.instance.startTime;
 
         TMP_Text laugh = _laughTotal.transform.GetChild(0).GetComponent<TMP_Text>();
-        laugh.text = FindAnyObjectByType<LaughMachine>().CurrentLaugh.ToString() + " / 100";
+        laugh.text = ((int)(FindAnyObjectByType<LaughMachine>().CurrentLaugh)).ToString() + " / 100";
 
         if (type == GameManager.OverType.Allies || type == GameManager.OverType.Totem)
         {
