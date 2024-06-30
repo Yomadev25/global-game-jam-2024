@@ -6691,7 +6691,7 @@ MonoBehaviour:
   _patrolDelay: 0
   _currentPatrol: 0
   _delayPerCombo: 5
-  laughDamage: 0.5
+  laughDamage: 1
   _navMesh: {fileID: 5453128132702382357}
   _anim: {fileID: 6642235112658037352}
   _defaultAnim: {fileID: 22100000, guid: 2a979e97ca1e2c14485576a512edb225, type: 2}
